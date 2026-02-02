@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Cookbook</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Header & Search -->
+    <header class="app-header">
+        <div class="logo-container">
+            <h1>Cookbook<span class="dot">.</span></h1>
+        </div>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="recipe-search" placeholder="Search for recipes, ingredients, tags..."
+                    autocomplete="off">
+                <div class="search-hint">Press <kbd>TAB</kbd> to autofill</div>
+            </div>
+            <div class="search-results-dropdown" id="search-results" hidden>
+                <!-- Search results injected here -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Categories / Filters (Optional, implied by "grouped" requirement) -->
+        <nav class="category-nav" id="category-nav">
+            <button class="filter-btn active" data-filter="all">All Recipes</button>
+            <!-- Categories injected dynamically -->
+        </nav>
+
+        <div class="recipe-grid" id="recipe-grid">
+            <!-- Recipe Cards injected here -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading recipes...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Recipe Modal -->
+    <div class="modal-backdrop" id="recipe-modal" hidden>
+        <div class="modal-content">
+            <div class="back-btn-container">
+                <button class="close-modal-btn" aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Recipes
+                </button>
+            </div>
+
+            <div class="modal-scroll-area">
+                <div class="modal-hero-image-container">
+                    <img src="" alt="Recipe Image" class="modal-hero-image" id="modal-image">
+                    <div class="modal-overlay-gradient"></div>
+                </div>
+
+                <div class="modal-body">
+                    <header class="modal-header">
+                        <div class="tags-container" id="modal-tags">
+                            <!-- Tags -->
+                        </div>
+                        <h2 class="modal-title" id="modal-title">Recipe Title</h2>
+                    </header>
+
+                    <div class="modal-section about-section">
+                        <h3>About this Recipe</h3>
+                        <p id="modal-about">Description goes here...</p>
+                    </div>
+
+                    <div class="modal-split-layout">
+                        <div class="modal-section ingredients-section">
+                            <h3>Ingredients</h3>
+                            <ul class="ingredients-list" id="modal-ingredients">
+                                <!-- Li Items -->
+                            </ul>
+                        </div>
+
+                        <div class="modal-section steps-section">
+                            <h3>Instructions</h3>
+                            <ol class="steps-list" id="modal-steps">
+                                <!-- Li Items -->
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="modal-section comments-section">
+                        <h3>Comments</h3>
+                        <div class="comments-list" id="modal-comments">
+                            <!-- Comments -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

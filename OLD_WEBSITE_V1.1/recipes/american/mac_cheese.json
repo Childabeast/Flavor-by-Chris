@@ -1,0 +1,29 @@
+{
+    "name": "Creamy Mac and Cheese",
+    "tags": [
+        "American",
+        "Vegetarian",
+        "Side Dish",
+        "Cheesy"
+    ],
+    "image": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+    "about": "Ultra creamy homemade mac and cheese with a crispy breadcrumb topping. Comfort food at its finest.",
+    "ingredients": [
+        "400g Macaroni",
+        "50g Butter",
+        "50g Flour",
+        "600ml Milk",
+        "300g Sharp Cheddar, grated",
+        "100g Mozzarella, grated",
+        "Breadcrumbs"
+    ],
+    "steps": [
+        "Cook macaroni until al dente. Drain.",
+        "Melt butter in a saucepan. Whisk in flour and cook for 1 minute (roux).",
+        "Gradually whisk in milk until smooth. Simmer until thickened.",
+        "Remove from heat and stir in the cheeses until melted.",
+        "Combine sauce and pasta. Transfer to a baking dish.",
+        "Top with breadcrumbs and bake at 180°C (350°F) for 20 minutes until golden."
+    ],
+    "comments": []
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Classic Spaghetti Bolognese",
+  "tags": ["Italian", "Dinner", "Pasta", "Comfort Food"],
+  "image": "https://images.unsplash.com/photo-1626844131082-256783844137?auto=format&fit=crop&w=800&q=80",
+  "about": "A rich, slow-cooked meat sauce served over al dente spaghetti. This classic Italian dish is perfect for family dinners and gets even better the next day.",
+  "ingredients": [
+    "400g Spaghetti",
+    "500g Ground Beef",
+    "1 Onion, finely chopped",
+    "2 Garlic cloves, minced",
+    "400g Canned Tomatoes",
+    "2 tbsp Tomato Paste",
+    "1 tsp Dried Oregano",
+    "Fresh Basil leaves",
+    "Parmesan Cheese"
+  ],
+  "steps": [
+    "Heat oil in a large pan over medium heat. Add onions and cook until soft.",
+    "Add garlic and ground beef. Cook until browned, breaking up lumps with a spoon.",
+    "Stir in tomato paste and oregano. Cook for 1 minute.",
+    "Add canned tomatoes and season with salt and pepper. Simmer for at least 30 minutes until thick.",
+    "Meanwhile, cook spaghetti in salted boiling water until al dente.",
+    "Toss pasta with the sauce and serve with fresh basil and parmesan."
+  ],
+  "comments": [
+    { "user": "Mario", "text": "Mamma mia! Just like home." },
+    { "user": "Sarah", "text": "Added a splash of red wine, delicious!" }
+  ]
+}

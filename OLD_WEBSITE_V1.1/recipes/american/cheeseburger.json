@@ -1,0 +1,29 @@
+{
+    "name": "Chocolate Chili",
+    "tags": [
+        "American",
+        "Lunch",
+        "Beef",
+        "Pot"
+    ],
+    "image": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
+    "about": "Goated chili recipe",
+    "ingredients": [
+        "500g Ground Beef (20% fat)",
+        "4 Brioche Buns"
+    ],
+    "steps": [
+        "Form the ground beef into 4 equal patties. Dent the center slightly with your thumb.",
+        "Season liberally with salt and pepper on both sides.",
+        "Grill or pan-fry over high heat for 3-4 minutes per side.",
+        "In the last minute of cooking, place a slice of cheese on each patty and cover to melt.",
+        "Toast the buns lightly properly.",
+        "Assemble: Bottom bun, lettuce, tomato, patty, pickles, sauce, top bun."
+    ],
+    "comments": [
+        {
+            "user": "Dave",
+            "text": "Simple and perfect."
+        }
+    ]
+}
