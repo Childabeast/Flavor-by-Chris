@@ -171,7 +171,8 @@ export default function AddRecipePage() {
                 rating: parseFloat(rating),
                 ingredientSections,
                 instructions,
-                notes
+                notes,
+                isPublic
             };
 
             const res = await fetch("/api/recipes", {
@@ -199,6 +200,16 @@ export default function AddRecipePage() {
 
     const { scrollY } = useScroll();
     const backgroundY = useTransform(scrollY, [0, 500], [0, -100]); // Parallax effect
+
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isPublic, setIsPublic] = useState(false);
+
+    React.useEffect(() => {
+        fetch("/api/admin/check")
+            .then(res => res.json())
+            .then(data => setIsAdmin(data.isAdmin))
+            .catch(err => console.error("Failed to check admin status", err));
+    }, []);
 
     return (
         <main className="relative min-h-screen w-full overflow-hidden">
@@ -434,6 +445,25 @@ export default function AddRecipePage() {
                                 </div>
                             </div>
 
+
+
+                            {isAdmin && (
+                                <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={isPublic}
+                                            onChange={(e) => setIsPublic(e.target.checked)}
+                                            className="h-5 w-5 rounded border-gray-300 text-deep-blue focus:ring-deep-blue"
+                                        />
+                                        <div>
+                                            <span className="block font-bold text-deep-blue">Make Master Recipe</span>
+                                            <span className="text-sm text-gray-600">Visible to all users on the main page</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            )}
+
                             <div className="pt-6">
                                 <Button type="submit" size="lg" className="h-14 w-full text-lg font-bold shadow-lg transition-transform hover:-translate-y-0.5" isLoading={isSubmitting} disabled={isSubmitting}>
                                     {isSubmitting ? "Saving Recipe..." : "Save Recipe"}
@@ -446,54 +476,56 @@ export default function AddRecipePage() {
             </div>
 
             {/* Crop Overlay */}
-            {isCropping && tempImage && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <motion.div
-                        initial={{ scale: 0.95, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="w-full max-w-lg overflow-hidden rounded-3xl bg-cream shadow-2xl"
-                    >
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-4">
-                            <h2 className="text-xl font-bold text-deep-blue">Adjust Photo</h2>
-                            <Button variant="ghost" size="sm" onClick={handleCropCancel} className="text-gray-400 hover:text-red-500">
-                                <X className="h-6 w-6" />
-                            </Button>
-                        </div>
-
-                        {/* Cropper Area */}
-                        <div className="relative flex max-h-[70vh] w-full items-center justify-center overflow-auto bg-black p-4">
-                            <ReactCrop
-                                crop={crop}
-                                onChange={(_, percentCrop) => setCrop(percentCrop)}
-                                onComplete={(c) => setCompletedCrop(c)}
-                                aspect={1}
-                                className="max-h-full"
-                            >
-                                <img
-                                    ref={imgRef}
-                                    src={tempImage}
-                                    alt="Crop me"
-                                    onLoad={onImageLoad}
-                                    className="max-h-[60vh] w-auto object-contain"
-                                />
-                            </ReactCrop>
-                        </div>
-
-                        {/* Controls Footer */}
-                        <div className="flex flex-col gap-6 px-8 py-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" onClick={handleCropCancel} className="w-full border-deep-blue text-deep-blue hover:bg-deep-blue/5">
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleCropSave} className="w-full bg-deep-blue text-white shadow-lg hover:bg-deep-blue/90">
-                                    Crop & Save
+            {
+                isCropping && tempImage && (
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="w-full max-w-lg overflow-hidden rounded-3xl bg-cream shadow-2xl"
+                        >
+                            {/* Header */}
+                            <div className="flex items-center justify-between px-6 py-4">
+                                <h2 className="text-xl font-bold text-deep-blue">Adjust Photo</h2>
+                                <Button variant="ghost" size="sm" onClick={handleCropCancel} className="text-gray-400 hover:text-red-500">
+                                    <X className="h-6 w-6" />
                                 </Button>
                             </div>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-        </main>
+
+                            {/* Cropper Area */}
+                            <div className="relative flex max-h-[70vh] w-full items-center justify-center overflow-auto bg-black p-4">
+                                <ReactCrop
+                                    crop={crop}
+                                    onChange={(_, percentCrop) => setCrop(percentCrop)}
+                                    onComplete={(c) => setCompletedCrop(c)}
+                                    aspect={1}
+                                    className="max-h-full"
+                                >
+                                    <img
+                                        ref={imgRef}
+                                        src={tempImage}
+                                        alt="Crop me"
+                                        onLoad={onImageLoad}
+                                        className="max-h-[60vh] w-auto object-contain"
+                                    />
+                                </ReactCrop>
+                            </div>
+
+                            {/* Controls Footer */}
+                            <div className="flex flex-col gap-6 px-8 py-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Button variant="outline" onClick={handleCropCancel} className="w-full border-deep-blue text-deep-blue hover:bg-deep-blue/5">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleCropSave} className="w-full bg-deep-blue text-white shadow-lg hover:bg-deep-blue/90">
+                                        Crop & Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )
+            }
+        </main >
     );
 }

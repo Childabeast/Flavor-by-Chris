@@ -6,9 +6,20 @@ export const dynamic = "force-dynamic"; // Ensure fresh data on every request
 
 // Data fetching helper
 // Data fetching helper
+import { auth } from "@clerk/nextjs/server";
+
 async function getRecipes(): Promise<Recipe[]> {
   try {
-    const result = await db.execute("SELECT * FROM recipes ORDER BY createdAt DESC");
+    const { userId } = await auth();
+
+    if (!userId) {
+      return [];
+    }
+
+    const result = await db.execute({
+      sql: "SELECT * FROM recipes WHERE userId = ? OR isPublic = 1 ORDER BY createdAt DESC",
+      args: [userId]
+    });
     const rows = result.rows;
     return rows.map((row: any) => ({
       ...row,
@@ -28,5 +39,8 @@ export default async function Home() {
   const shuffled = [...recipes].sort(() => 0.5 - Math.random());
   const recommended = shuffled.slice(0, 3);
 
-  return <HomeClient initialRecipes={recipes} recommendedRecipes={recommended} />;
+  const { userId } = await auth();
+  const isAdmin = userId === process.env.ADMIN_USER_ID;
+
+  return <HomeClient initialRecipes={recipes} recommendedRecipes={recommended} userId={userId} isAdmin={isAdmin} />;
 }

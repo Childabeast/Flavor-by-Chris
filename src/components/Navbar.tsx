@@ -7,6 +7,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
     const { scrollY } = useScroll();
@@ -52,11 +53,14 @@ export function Navbar() {
                 <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                     Menu
                 </Button>
-                <Link href="/add">
-                    <Button variant="primary" size="sm">
-                        Add Recipe
-                    </Button>
-                </Link>
+
+                <SignedIn>
+                    <Link href="/add">
+                        <Button variant="primary" size="sm">
+                            Add Recipe
+                        </Button>
+                    </Link>
+                </SignedIn>
             </div>
 
             {/* Center Title */}
@@ -68,9 +72,9 @@ export function Navbar() {
                 </Link>
             </div>
 
-            {/* Right Search */}
-            <div className="flex w-1/3 justify-end">
-                <div className="relative w-full max-w-[240px]">
+            {/* Right Search & Auth */}
+            <div className="flex w-1/3 justify-end items-center gap-4">
+                <div className="relative w-full max-w-[200px] hidden md:block">
                     <Input
                         pill
                         placeholder="Search recipes..."
@@ -78,6 +82,22 @@ export function Navbar() {
                     />
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 </div>
+
+                <SignedOut>
+                    <SignInButton mode="modal">
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            className="bg-deep-blue text-white hover:bg-deep-blue/90"
+                        >
+                            Log In
+                        </Button>
+                    </SignInButton>
+                </SignedOut>
+
+                <SignedIn>
+                    <UserButton afterSignOutUrl="/" />
+                </SignedIn>
             </div>
         </motion.nav>
     );

@@ -13,7 +13,7 @@ interface HomeClientProps {
     recommendedRecipes: Recipe[];
 }
 
-export default function HomeClient({ initialRecipes, recommendedRecipes }: HomeClientProps) {
+export default function HomeClient({ initialRecipes, recommendedRecipes, userId, isAdmin }: HomeClientProps & { userId: string | null, isAdmin: boolean }) {
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [recipes] = useState<Recipe[]>(initialRecipes);
@@ -114,6 +114,8 @@ export default function HomeClient({ initialRecipes, recommendedRecipes }: HomeC
                 recipe={selectedRecipe}
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
+                userId={userId}
+                isAdmin={isAdmin}
             />
         </main>
     );

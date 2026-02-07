@@ -27,9 +27,25 @@ const db = createClient({
                 ingredientSections TEXT, -- JSON string
                 instructions TEXT,
                 notes TEXT,
-                createdAt INTEGER
+                createdAt INTEGER,
+                userId TEXT,
+                isPublic INTEGER DEFAULT 0
             )
         `);
+
+    // Try to add the column if it doesn't exist (for migration)
+    try {
+      await db.execute("ALTER TABLE recipes ADD COLUMN userId TEXT");
+    } catch (e) {
+      // Column likely already exists
+    }
+
+    try {
+      await db.execute("ALTER TABLE recipes ADD COLUMN isPublic INTEGER DEFAULT 0");
+    } catch (e) {
+      // Column likely already exists
+    }
+
   } catch (e) {
     console.error("Failed to init db schema", e);
   }

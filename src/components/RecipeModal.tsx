@@ -12,9 +12,22 @@ interface RecipeModalProps {
     recipe: Recipe | null;
     isOpen: boolean;
     onClose: () => void;
+    userId?: string | null;
+    isAdmin?: boolean;
 }
 
-export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
+import { useRouter } from "next/navigation";
+
+export function RecipeModal({ recipe, isOpen, onClose, userId, isAdmin }: RecipeModalProps) {
+    const router = useRouter();
+
+    const canEdit = recipe && (isAdmin || (userId && recipe.userId === userId));
+
+    const handleEdit = () => {
+        if (recipe) {
+            router.push(`/edit/${recipe.id}`);
+        }
+    };
     // Prevent body scroll when open
     useEffect(() => {
         if (isOpen) {
@@ -157,6 +170,15 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
                                     </div>
 
                                 </div>
+
+                                {/* Edit Button */}
+                                {canEdit && (
+                                    <div className="mt-8 flex justify-end">
+                                        <Button onClick={handleEdit} className="bg-deep-blue text-white hover:bg-deep-blue/90">
+                                            Edit Recipe
+                                        </Button>
+                                    </div>
+                                )}
 
                             </div>
                         </motion.div>

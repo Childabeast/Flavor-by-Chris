@@ -23,4 +23,6 @@ export interface Recipe {
     instructions: string; // multiline text
     notes?: string;
     createdAt?: number;
+    userId?: string;
+    isPublic?: boolean;
 }

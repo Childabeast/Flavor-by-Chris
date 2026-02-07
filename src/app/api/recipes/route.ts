@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
 import { Recipe } from "@/types";
+import { auth } from "@clerk/nextjs/server";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -30,7 +31,16 @@ async function saveImage(image: string): Promise<string> {
 
 export async function GET() {
     try {
-        const result = await db.execute("SELECT * FROM recipes ORDER BY createdAt DESC");
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json([]);
+        }
+
+        const result = await db.execute({
+            sql: "SELECT * FROM recipes WHERE userId = ? OR isPublic = 1 ORDER BY createdAt DESC",
+            args: [userId]
+        });
         const rows = result.rows;
 
         // Parse JSON fields
@@ -48,8 +58,18 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const body = await req.json();
-        const { name, image, rating, ingredientSections, instructions, notes } = body;
+        const { name, image, rating, ingredientSections, instructions, notes, isPublic } = body;
+
+        // Only allow admin to make public recipes
+        const isAdmin = userId === process.env.ADMIN_USER_ID;
+        const finalIsPublic = isAdmin && isPublic ? 1 : 0;
 
         const savedImageUrl = image ? await saveImage(image) : "";
         const id = uuidv4();
@@ -57,8 +77,8 @@ export async function POST(req: NextRequest) {
 
         await db.execute({
             sql: `
-      INSERT INTO recipes (id, name, image, rating, ingredientSections, instructions, notes, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO recipes (id, name, image, rating, ingredientSections, instructions, notes, createdAt, userId, isPublic)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
             args: [
                 id,
@@ -69,6 +89,8 @@ export async function POST(req: NextRequest) {
                 instructions,
                 notes,
                 createdAt,
+                userId,
+                finalIsPublic
             ],
         });
 
