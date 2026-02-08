@@ -12,14 +12,18 @@ async function getRecipes(): Promise<Recipe[]> {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
-      return [];
+    let result;
+    if (userId) {
+      result = await db.execute({
+        sql: "SELECT * FROM recipes WHERE userId = ? OR isPublic = 1 ORDER BY createdAt DESC",
+        args: [userId]
+      });
+    } else {
+      result = await db.execute({
+        sql: "SELECT * FROM recipes WHERE isPublic = 1 ORDER BY createdAt DESC",
+        args: []
+      });
     }
-
-    const result = await db.execute({
-      sql: "SELECT * FROM recipes WHERE userId = ? OR isPublic = 1 ORDER BY createdAt DESC",
-      args: [userId]
-    });
     const rows = result.rows;
     return rows.map((row: any) => ({
       ...row,

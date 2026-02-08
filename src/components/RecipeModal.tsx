@@ -1,12 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
 import { Recipe } from "@/types";
-import { AnimatePresence, motion } from "framer-motion";
-import { X, Star, Clock, ChefHat } from "lucide-react";
+import React, { useEffect } from "react";
+import { X, Clock, Users, ChefHat } from "lucide-react";
+import { BackgroundPattern } from "@/components/BackgroundPattern";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface RecipeModalProps {
     recipe: Recipe | null;
@@ -16,19 +15,8 @@ interface RecipeModalProps {
     isAdmin?: boolean;
 }
 
-import { useRouter } from "next/navigation";
-
 export function RecipeModal({ recipe, isOpen, onClose, userId, isAdmin }: RecipeModalProps) {
-    const router = useRouter();
-
-    const canEdit = recipe && (isAdmin || (userId && recipe.userId === userId));
-
-    const handleEdit = () => {
-        if (recipe) {
-            router.push(`/edit/${recipe.id}`);
-        }
-    };
-    // Prevent body scroll when open
+    // Prevent scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = "hidden";
@@ -40,150 +28,142 @@ export function RecipeModal({ recipe, isOpen, onClose, userId, isAdmin }: Recipe
         };
     }, [isOpen]);
 
-    // Handle ESC key
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
-        window.addEventListener("keydown", handleEsc);
-        return () => window.removeEventListener("keydown", handleEsc);
-    }, [onClose]);
-
     if (!isOpen || !recipe) return null;
 
     return (
         <AnimatePresence>
             {isOpen && (
-                <>
-                    {/* Backdrop */}
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-blue/20 backdrop-blur-sm p-4">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
+                        className="absolute inset-0"
                     />
 
-                    {/* Modal Container */}
-                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+                    <div className="relative z-10 flex flex-col items-center gap-6 w-full max-w-5xl h-[90vh] pointer-events-none">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            transition={{ type: "spring", duration: 0.3 }}
-                            className="pointer-events-auto relative flex h-full max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className="relative w-full flex-1 overflow-hidden rounded-[2.5rem] bg-cream shadow-2xl flex flex-col md:flex-row pointer-events-auto"
+                            onClick={(e) => e.stopPropagation()}
                         >
+                            {/* Background Pattern */}
+                            <BackgroundPattern />
+
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-md transition-colors hover:bg-black/30"
+                                className="absolute right-6 top-6 z-50 rounded-full bg-white/80 p-2 text-deep-blue backdrop-blur-sm transition-transform hover:scale-110 hover:bg-white"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-6 w-6" />
                             </button>
 
-                            {/* Image Section */}
-                            <div className="relative h-64 shrink-0 sm:h-80 w-full bg-black/5">
-                                {recipe.image ? (
-                                    <Image
-                                        src={recipe.image}
-                                        alt={recipe.name}
-                                        fill
-                                        className="object-cover opacity-95"
-                                    />
-                                ) : (
-                                    <div className="flex h-full w-full items-center justify-center text-gray-400">
-                                        No Image
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                            {/* Content Container - Scrollable */}
+                            <div className="relative z-10 flex flex-col md:flex-row h-full w-full overflow-y-auto md:overflow-hidden">
 
-                                <div className="absolute bottom-6 left-6 right-6">
-                                    <h2 className="font-display text-3xl font-bold text-white md:text-4xl text-shadow-sm">
-                                        {recipe.name}
-                                    </h2>
-                                    {/* Rating */}
-                                    <div className="mt-2 flex items-center gap-2">
-                                        <div className="flex text-yellow-400">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <Star
-                                                    key={star}
-                                                    fill={star <= Math.round(recipe.rating) ? "currentColor" : "none"}
-                                                    className={cn("h-5 w-5", star > Math.round(recipe.rating) && "text-gray-400")}
-                                                />
-                                            ))}
+                                {/* Left Side: Image (Desktop) / Top (Mobile) */}
+                                <div className="relative h-64 w-full md:h-full md:w-1/2 shrink-0">
+                                    {recipe.image ? (
+                                        <Image
+                                            src={recipe.image}
+                                            alt={recipe.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    ) : ( // Fallback
+                                        <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-400">
+                                            <ChefHat className="h-20 w-20 opacity-20" />
                                         </div>
-                                        <span className="text-lg font-medium text-white">{recipe.rating}</span>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r" />
+
+                                    <div className="absolute bottom-6 left-6 right-6 text-white md:hidden">
+                                        <h2 className="font-display text-3xl font-bold leading-tight shadow-black drop-shadow-md">
+                                            {recipe.name}
+                                        </h2>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Content Scrollable Area */}
-                            <div className="flex-1 overflow-y-auto p-6 md:p-8">
+                                {/* Right Side: Details (Desktop) / Bottom (Mobile) */}
+                                <div className="flex flex-col p-8 md:w-1/2 md:overflow-y-auto md:p-12 md:my-14 md:max-h-[calc(100%-7rem)]">
+                                    <div className="mb-0 hidden md:block">
+                                        <h2 className="font-display text-4xl font-bold text-deep-blue mb-4">
+                                            {recipe.name}
+                                        </h2>
+                                    </div>
 
-                                <div className="grid gap-10 md:grid-cols-[1fr_1.5fr]">
-
-                                    {/* Ingredients Column */}
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-2 text-deep-blue">
-                                            <ChefHat className="h-6 w-6" />
-                                            <h3 className="font-display text-2xl font-bold">Ingredients</h3>
+                                    {/* Metadata */}
+                                    <div className="flex gap-6 mb-8 text-deep-blue/70 font-sans text-sm font-medium tracking-wide border-b border-deep-blue/10 pb-6">
+                                        {/*  Placeholder metadata if not in recipe type yet, or derived */}
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="h-4 w-4" />
+                                            <span>30 mins</span>
                                         </div>
+                                        <div className="flex items-center gap-2">
+                                            <Users className="h-4 w-4" />
+                                            <span>4 servings</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <ChefHat className="h-4 w-4" />
+                                            <span>Easy</span>
+                                        </div>
+                                    </div>
 
+                                    {/* Ingredients */}
+                                    <div className="mb-8">
+                                        <h3 className="font-display text-2xl font-bold text-deep-blue mb-4">Ingredients</h3>
                                         <div className="space-y-6">
-                                            {recipe.ingredientSections?.length > 0 ? (
-                                                recipe.ingredientSections.map((section, idx) => (
-                                                    <div key={idx} className="rounded-xl bg-cream/50 p-4 border border-deep-blue/5">
-                                                        <h4 className="mb-3 font-bold text-deep-blue text-lg border-b border-deep-blue/10 pb-1">{section.title}</h4>
-                                                        <ul className="space-y-2">
-                                                            {section.items.map((item, i) => (
-                                                                <li key={i} className="flex justify-between text-base">
-                                                                    <span className="text-gray-700">{item.name}</span>
-                                                                    <span className="font-medium text-deep-blue">{item.amount}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500 italic">No ingredients listed.</p>
-                                            )}
+                                            {recipe.ingredientSections?.map((section, idx) => (
+                                                <div key={idx}>
+                                                    {section.title && (
+                                                        <h4 className="font-sans font-bold text-deep-blue/80 mb-2 text-sm uppercase tracking-wider">
+                                                            {section.title}
+                                                        </h4>
+                                                    )}
+                                                    <ul className="space-y-2">
+                                                        {section.items.map((item, itemIdx) => (
+                                                            <li key={itemIdx} className="flex items-start gap-2 text-deep-blue/80">
+                                                                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-deep-blue/40" />
+                                                                <span className="flex-1">
+                                                                    <span className="font-semibold">{item.amount}</span> {item.name}
+                                                                </span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )) || <p className="text-gray-500 italic">No ingredients listed.</p>}
                                         </div>
                                     </div>
 
-                                    {/* Instructions Column */}
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-2 text-deep-blue">
-                                            <Clock className="h-6 w-6" />
-                                            <h3 className="font-display text-2xl font-bold">Instructions</h3>
+                                    {/* Instructions */}
+                                    <div>
+                                        <h3 className="font-display text-2xl font-bold text-deep-blue mb-4">Instructions</h3>
+                                        <div className="prose prose-stone text-deep-blue/80 font-sans leading-relaxed whitespace-pre-line">
+                                            {recipe.instructions || <p className="italic text-gray-500">No instructions provided.</p>}
                                         </div>
-
-                                        <div className="prose prose-lg text-gray-700 whitespace-pre-line leading-relaxed">
-                                            {recipe.instructions || "No instructions provided."}
-                                        </div>
-
-                                        {recipe.notes && (
-                                            <div className="mt-8 rounded-xl bg-yellow-50 p-6 text-yellow-900 border border-yellow-100">
-                                                <h4 className="mb-2 font-bold">Chef's Notes</h4>
-                                                <p>{recipe.notes}</p>
-                                            </div>
-                                        )}
                                     </div>
-
                                 </div>
-
-                                {/* Edit Button */}
-                                {canEdit && (
-                                    <div className="mt-8 flex justify-end">
-                                        <Button onClick={handleEdit} className="bg-deep-blue text-white hover:bg-deep-blue/90">
-                                            Edit Recipe
-                                        </Button>
-                                    </div>
-                                )}
-
                             </div>
                         </motion.div>
+
+                        <motion.a
+                            href={`/recipe/${recipe.name.toLowerCase().replace(/ /g, "-")}`}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="pointer-events-auto flex items-center gap-2 rounded-full bg-[#2C4B70] px-8 py-3 font-sans text-base font-bold text-white shadow-lg shadow-[#2C4B70]/30 hover:bg-[#2C4B70]/90 hover:shadow-xl hover:shadow-[#2C4B70]/40 transition-all"
+                        >
+                            Go to recipe
+                        </motion.a>
                     </div>
-                </>
+                </div>
             )}
         </AnimatePresence>
     );

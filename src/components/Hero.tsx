@@ -97,7 +97,7 @@ export function Hero() {
                         disablePictureInPicture
                         disableRemotePlayback
                         className="pointer-events-none h-full w-full object-cover opacity-80"
-                        src="/hero-video.mp4"
+                        src="https://res.cloudinary.com/dfip0knxf/video/upload/v1770459145/hero-video_zub0bn.mp4"
                     />
                 </motion.div>
             </div>

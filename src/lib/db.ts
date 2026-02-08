@@ -17,6 +17,7 @@ const db = createClient({
 // ideally this should be a migration script, but for this simple app we'll do it here.
 (async () => {
   try {
+    // 1. Recipes Table
     await db.execute(`
             CREATE TABLE IF NOT EXISTS recipes (
                 id TEXT PRIMARY KEY,
@@ -33,18 +34,37 @@ const db = createClient({
             )
         `);
 
-    // Try to add the column if it doesn't exist (for migration)
+    // 2. Users Table (New)
+    await db.execute(`
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY, -- Clerk User ID
+                username TEXT UNIQUE,
+                createdAt INTEGER
+            )
+        `);
+
+    // 3. Reviews Table (New)
+    await db.execute(`
+            CREATE TABLE IF NOT EXISTS reviews (
+                id TEXT PRIMARY KEY,
+                recipeId TEXT NOT NULL,
+                userId TEXT NOT NULL,
+                text TEXT NOT NULL,
+                createdAt INTEGER,
+                FOREIGN KEY(recipeId) REFERENCES recipes(id),
+                FOREIGN KEY(userId) REFERENCES users(id)
+            )
+        `);
+
+
+    // Migrations (idempotent)
     try {
       await db.execute("ALTER TABLE recipes ADD COLUMN userId TEXT");
-    } catch (e) {
-      // Column likely already exists
-    }
+    } catch (e) { /* Column likely already exists */ }
 
     try {
       await db.execute("ALTER TABLE recipes ADD COLUMN isPublic INTEGER DEFAULT 0");
-    } catch (e) {
-      // Column likely already exists
-    }
+    } catch (e) { /* Column likely already exists */ }
 
   } catch (e) {
     console.error("Failed to init db schema", e);

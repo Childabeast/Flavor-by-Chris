@@ -55,3 +55,10 @@ video::-webkit-media-controls-play-button {
 video::-webkit-media-controls-start-playback-button {
   display: none !important;
 }
+
+/* Hide Clerk Branding */
+.cl-internal-b3fm6y,
+.cl-footer,
+.cl-internal-1dauvpw {
+  display: none !important;
+}

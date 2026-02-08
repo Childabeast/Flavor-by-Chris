@@ -14,6 +14,7 @@ export function Navbar() {
     const [hidden, setHidden] = useState(false);
     const pathname = usePathname();
     const isAddPage = pathname === "/add";
+    const isAuthPage = pathname?.startsWith("/sign-in") || pathname?.startsWith("/sign-up");
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious() || 0;
@@ -38,6 +39,9 @@ export function Navbar() {
             }
         }
     });
+
+    if (isAuthPage) return null;
+
     return (
         <motion.nav
             variants={{
@@ -84,7 +88,7 @@ export function Navbar() {
                 </div>
 
                 <SignedOut>
-                    <SignInButton mode="modal">
+                    <Link href="/sign-in">
                         <Button
                             variant="primary"
                             size="sm"
@@ -92,10 +96,15 @@ export function Navbar() {
                         >
                             Log In
                         </Button>
-                    </SignInButton>
+                    </Link>
                 </SignedOut>
 
                 <SignedIn>
+                    <Link href="/account">
+                        <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+                            Account
+                        </Button>
+                    </Link>
                     <UserButton afterSignOutUrl="/" />
                 </SignedIn>
             </div>
